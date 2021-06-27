@@ -47,7 +47,7 @@ public class StepDefsTest {
     }
 
     @Пусть("открыт ресурс Авито")
-    @Test(description = "Старт приложения")
+    @Test(priority = 1, description = "Старт приложения")
     public void openRecourse() {
         drv.get("https://www.avito.ru/");
 
@@ -57,7 +57,7 @@ public class StepDefsTest {
 
     @И("в выпадающием списке категорий выбрана {mainCategory}")
     @Parameters("mainCategory")
-    @Test(description = "в выпадающием списке категорий выбрана категория")
+    @Test(priority = 2, description = "в выпадающием списке категорий выбрана категория")
     public void selectCategory(@Optional("Оргтехника_и_расходники") MainCategory mainCategory) {
         Select selectCategory = new Select(drv.findElement(By.xpath("//select[@name='category_id']")));
         selectCategory.selectByValue(mainCategory.value);
@@ -65,14 +65,14 @@ public class StepDefsTest {
 
     @И("в поле поиска введено значение {word}")
     @Parameters("findStr")
-    @Test(description = "в поле поиска введено значение")
+    @Test(priority = 3, description = "в поле поиска введено значение")
     public void setValueFind(@Optional("принтер") String findStr) {
         WebElement findTool = drv.findElement(By.xpath("//input[@data-marker='search-form/suggest']"));
         findTool.sendKeys(findStr);
     }
 
     @Тогда("кликнуть по выпадающему списку региона")
-    @Test(description = "клик по выпадающему списку региона")
+    @Test(priority = 4, description = "клик по выпадающему списку региона")
     public void getRegion() {
         WebElement cityButton = drv.findElement(By.xpath("//div[@data-marker='search-form/region']"));
         cityButton.click();
@@ -81,19 +81,24 @@ public class StepDefsTest {
     // Заполним значением “Владивосток” поле город  в открывшемся окне и кликнем по первому предложенному варианту
     // Нажмем на кнопку “Показать объявления”
     @Тогда("в поле региона введено значение {word}")
-    public void addValue(String city) {
+    @Parameters("city")
+    @Test(priority = 5, description = "в поле региона введено значение")
+    public void addValue(@Optional("Владивосток") String city) {
         WebElement findCity = drv.findElement(By.xpath("//input[@data-marker='popup-location/region/input']"));
         findCity.sendKeys(city);
     }
 
     @И("нажата кнопка показать объявления")
+    @Test(priority = 6, description = "нажата кнопка показать объявления")
     public void clickAdButton() {
         drv.findElement(By.xpath("//li[@data-marker='suggest(0)']")).click();
         drv.findElement(By.xpath("//button[@data-marker='popup-location/save-button']")).click();
     }
 
     @Тогда("открыласть страница результатов по запросу {word}")
-    public void isNeedPage(String printer) {
+    @Parameters("printer")
+    @Test(priority = 7, description = "открыласть страница результатов по запросу")
+    public void isNeedPage(@Optional("принтер") String printer) {
         String str = drv.findElement(By.xpath("//h1[@data-marker='page-title/text']")).getText();
         if (str.contains(printer)) {
             System.out.println("open page contain printer");
@@ -104,6 +109,7 @@ public class StepDefsTest {
 
 
     @И("активирован чекбокс только с доставкой")
+    @Test(priority = 8, description = "активирован чекбокс только с доставкой")
     public void checkCheckBox() {
         WebElement checkBox = drv.findElement(By.xpath("//div[@data-marker='delivery-filter/container']"));
         if (!checkBox.isSelected()) {
@@ -113,13 +119,17 @@ public class StepDefsTest {
     }
 
     @И("в выпадающем списке сортировка выбрано значение {expensiveCategory}")
-    public void changeFilter(ExpensiveCategory expensiveCategory) {
+    @Parameters("expensiveCategory")
+    @Test(priority = 9, description = "в выпадающем списке сортировка выбрано значение Дороже")
+    public void changeFilter(@Optional("Дороже") ExpensiveCategory expensiveCategory) {
         Select selectFilter = new Select(drv.findElement(By.xpath("//div[@class='sort-select-3QxXG select-select-box-3LBfK select-size-s-2gvAy']/select")));
         selectFilter.selectByValue(expensiveCategory.value);
     }
 
     @И("в консоль выведены названия и цены {int} первых товаров")
-    public void printResults(int number) {
+    @Parameters("number")
+    @Test(priority = 10, description = "в консоль выведены названия и цены первых товаров")
+    public void printResults(@Optional("3") int number) {
         List<WebElement> printers = drv.findElements(By.xpath("//div[@data-marker='catalog-serp']/div[@data-marker='item']"));
         for (int i = 0; i < number; i++) {
             System.out.println(printers.get(i).findElement(By.xpath(".//h3[@itemprop='name']")).getText() +
